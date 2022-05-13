@@ -2,6 +2,7 @@ import { StyleSheet, TextInput, Text, View } from "react-native";
 import React, { useState } from "react";
 
 export default OwnTextInput = ({
+  key,
   value,
   placeholder,
   onChangeText,
@@ -13,6 +14,7 @@ export default OwnTextInput = ({
     <View style={styles.view}>
       <Text>{label}</Text>
       <TextInput
+        key={key}
         style={[isFocus ? styles.inputFocus : null, styles.input, style]}
         value={value}
         placeholder={placeholder}
