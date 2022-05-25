@@ -8,6 +8,7 @@ export default OwnTextInput = ({
   onChangeText,
   style,
   label,
+  errorMsg,
 }) => {
   const [isFocus, setIsFocus] = useState(false);
   return (
@@ -22,6 +23,7 @@ export default OwnTextInput = ({
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
       />
+      {errorMsg ? (<Text style={styles.errorMsg}>{errorMsg}</Text>) : null }
     </View>
   );
 };
@@ -29,6 +31,9 @@ export default OwnTextInput = ({
 const styles = StyleSheet.create({
   view: {
     margin: 12,
+  },
+  errorMsg: {
+    color: 'red',
   },
   input: {
     paddingLeft: 8,
