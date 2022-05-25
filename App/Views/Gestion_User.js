@@ -10,10 +10,14 @@ const Gestion_User = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [users, setUsers] = useState();
+  const [login, setLogin] = useState("");
+  const [password, setPassword] = useState();
 
   const [usersIdToUpdate, setUsersIdToUpdate] = useState("");
   const [userFirstNameToUpdate, setUserFirstNameToUpdate] = useState("");
   const [userLastNameToUpdate, setUserLastNameToUpdate] = useState("");
+  const [userLoginToUpdate, setUserLoginToUpdate] = useState("");
+  const [userPasswordToUpdate, setUserPasswordToUpdate] = useState("");
 
   const [isVisibleAdd, setIsVisibleAdd] = useState(false);
   const [isVisibleUpdate, setIsVisibleUpdate] = useState(false);
@@ -33,7 +37,7 @@ const Gestion_User = ({ navigation }) => {
   const onPressAdd = async () => {
     const url = `${BASE_API}/users/create`;
     console.log(url);
-    const body = `lastName=${lastName}&firstName=${firstName}`;
+    const body = `lastName=${lastName}&firstName=${firstName}&password=${password}&login=${login}`;
     const response = await axios
       .post(url, body)
       .catch((error) => console.log(error));
@@ -53,7 +57,8 @@ const Gestion_User = ({ navigation }) => {
   const onPressUpdate = async () => {
     const url = `${BASE_API}/users/update/${usersIdToUpdate}`;
     console.log(url);
-    const body = `firstName=${userFirstNameToUpdate}&lastName=${userLastNameToUpdate}`;
+    const body = `firstName=${userFirstNameToUpdate}&lastName=${userLastNameToUpdate}&login=${userLoginToUpdate}&password=${userPasswordToUpdate}`;
+    console.log(body)
     const response = await axios
       .patch(url, body)
       .catch((error) => console.log(error));
@@ -102,6 +107,8 @@ const Gestion_User = ({ navigation }) => {
         <View style={{ backgroundColor: "white", flex: 1 }}>
           <OwnTextInput label="Theme" onChangeText={setFirstName} />
           <OwnTextInput label="Name" onChangeText={setLastName} />
+          <OwnTextInput label="Login" onChangeText={setLogin} />
+          <OwnTextInput label="Password" onChangeText={setPassword} />
           <View style={styles.buttonContainer}>
             <Button
               variant="outlined"
@@ -131,6 +138,11 @@ const Gestion_User = ({ navigation }) => {
             label="Name"
             onChangeText={setUserFirstNameToUpdate}
             value={userFirstNameToUpdate}
+          />
+          <OwnTextInput label="Login" onChangeText={setUserLoginToUpdate} />
+          <OwnTextInput
+            label="Password"
+            onChangeText={setUserPasswordToUpdate}
           />
           <View style={styles.buttonContainer}>
             <Button
