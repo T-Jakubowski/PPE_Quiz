@@ -58,9 +58,13 @@ const Gestion_Quiz = ({ navigation }) => {
   };
 
   const onPressDelete = async (id) => {
-    const url = `${BASE_API}/quiz/delete/${id}`;
-    const response = await axios
-      .delete(url)
+    const urlQuiz = `${BASE_API}/quiz/delete/${id}`;
+    const responseQuiz = await axios
+      .delete(urlQuiz)
+      .catch((error) => console.log(error));
+    const urlQuestions = `${BASE_API}/questions/deleteall/${id}`;
+    const responseQuestions = await axios
+      .delete(urlQuestions)
       .catch((error) => console.log(error));
     getQuizzes();
   };

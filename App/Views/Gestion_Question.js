@@ -7,7 +7,6 @@ import { BASE_API } from "@env";
 import DisplayQuizzes from "../components/DisplayQuizzes";
 
 export default function test({ route, navigation }) {
-  const [idQuiz, setIdQuiz] = useState(route.params._id);
   const [questions, setQuestions] = useState("");
   const [questionAdd, setQuestionAdd] = useState("");
   const [correctAnswer, setCorrectAnswer] = useState("");
@@ -19,18 +18,15 @@ export default function test({ route, navigation }) {
   const [correctAnswerUpdate, setCorrectAnswerUpdate] = useState("");
   const [questionIdToUpdate, setQuestionIdToUpdate] = useState("");
   const [isVisibleUpdate, setIsVisibleUpdate] = useState(false);
+  console.log(route.params._id);
 
-  const urlGetQuestions = `${BASE_API}/questions/readall/${idQuiz}`;
-
+  const urlGetQuestions = `${BASE_API}/questions/readall/${route.params._id}`;
   const getQuestions = async () =>
     await axios
       .get(urlGetQuestions)
       .then((response) => setQuestions(response.data))
       .catch((error) => console.log(error)).data;
-
-  useEffect(() => {
-    getQuestions();
-  }, []);
+      getQuestions();
 
   const question = () => {
     let input = [];
@@ -103,7 +99,7 @@ export default function test({ route, navigation }) {
       urlArray += `&options[${i}]=${reponsesUpdate[i]}`;
     }
     const url = `${BASE_API}/questions/update/${questionIdToUpdate}`;
-    const body = `question=${questionUpdate}&correct_option=${correctAnswerUpdate}${urlArray}&quiz_id=${idQuiz}`;
+    const body = `question=${questionUpdate}&correct_option=${correctAnswerUpdate}${urlArray}&quiz_id=${route.params._id}`;
     const response = await axios
       .patch(url, body)
       .catch((error) => console.log(error));
@@ -117,7 +113,7 @@ export default function test({ route, navigation }) {
     for (let i = 0; i < reponsesAdd.length; i++) {
       urlArray += `&options[${i}]=${reponsesAdd[i]}`;
     }
-    const body = `question=${questionAdd}&correct_option=${correctAnswer}${urlArray}&quiz_id=${idQuiz}`;
+    const body = `question=${questionAdd}&correct_option=${correctAnswer}${urlArray}&quiz_id=${route.params._id}`;
     console.log(body);
     await axios.post(urlAddQuestions, body).catch((error) => console.log(error))
       .data;
