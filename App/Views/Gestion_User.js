@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { stringMd5 } from 'react-native-quick-md5';
+
 import { Text, View, StyleSheet, Modal, ScrollView } from "react-native";
 import { Button } from "@react-native-material/core";
 import OwnTextInput from "../components/TextInput";
@@ -48,12 +50,11 @@ const Gestion_User = ({ navigation }) => {
   };
 
   const onPressAdd = async () => {
-    console.log(firstName);
-    console.log(isValidAdd());
     if (isValidAdd()) {
       const url = `${BASE_API}/users/create`;
+      const passwordHash = stringMd5(password);
       console.log(url);
-      const body = `lastName=${lastName}&firstName=${firstName}&password=${password}&login=${login}`;
+      const body = `lastName=${lastName}&firstName=${firstName}&password=${passwordHash}&login=${login}`;
       const response = await axios
         .post(url, body)
         .catch((error) => console.log(error));
@@ -78,8 +79,8 @@ const Gestion_User = ({ navigation }) => {
   const onPressUpdate = async () => {
     if (isValidUpdate()) {
       const url = `${BASE_API}/users/update/${usersIdToUpdate}`;
-      console.log(url);
-      const body = `firstName=${userFirstNameToUpdate}&lastName=${userLastNameToUpdate}&login=${userLoginToUpdate}&password=${userPasswordToUpdate}`;
+      const passwordHash = stringMd5(userPasswordToUpdate);
+      const body = `firstName=${userFirstNameToUpdate}&lastName=${userLastNameToUpdate}&login=${userLoginToUpdate}&password=${passwordHash}`;
       console.log(body);
       const response = await axios
         .patch(url, body)
