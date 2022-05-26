@@ -1,7 +1,12 @@
-import * as React from "react";
+import React, { useState } from "react";
+import { View, StyleSheet } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
+import { Button } from "@react-native-material/core";
+import OwnTextInput from "./App/components/TextInput";
+import axios from "axios";
+import { BASE_API } from "@env";
 import Home from "./App/Views/Home";
 import Quiz from "./App/Views/Quiz";
 import Gestion_Quiz from "./App/Views/Gestion_Quiz";
@@ -11,42 +16,61 @@ import Gestion_Question from "./App/Views/Gestion_Question";
 
 export default function App() {
   const Drawer = createDrawerNavigator();
+
+  const [login, setLogin] = useState("");
+  const [password, setPassword] = useState("");
+  const [can, setCan] = useState(false);
+
+  const auth = async () => {
+    const url = `${BASE_API}/users/login`;
+    console.log(url);
+    const body = `password=${password}&login=${login}`;
+    const response = await axios
+      .post(url, body)
+      .then((response) => { if(response.data.length > 0){setCan(true)} })
+      .catch((error) => console.log(error));
+  };
+
   return (
-    <NavigationContainer>
-      <Drawer.Navigator initialRouteName="Home">
-        <Drawer.Screen name="Home" component={Home} />
-        <Drawer.Screen name="Quiz" component={Quiz} />
-        <Drawer.Screen name="Gestion des quiz" component={Gestion_Quiz} />
-        <Drawer.Screen name="Gestion des roles" component={Gestion_Role} />
-        <Drawer.Screen
-          name="Gestion_Question"
-          component={Gestion_Question}
-          options={{
-            drawerItemStyle: { display: "none" },
-          }}
-        />
-        <Drawer.Screen name="Gestion des users" component={Gestion_User} />
-      </Drawer.Navigator>
-    </NavigationContainer>
+    <>
+      {can ? (
+        <NavigationContainer>
+          <Drawer.Navigator initialRouteName="Login">
+            <Drawer.Screen name="Home" component={Home} />
+            <Drawer.Screen name="Quiz" component={Quiz} />
+            <Drawer.Screen name="Gestion des quiz" component={Gestion_Quiz} />
+            <Drawer.Screen name="Gestion des roles" component={Gestion_Role} />
+            <Drawer.Screen
+              name="Gestion_Question"
+              component={Gestion_Question}
+              options={{
+                drawerItemStyle: { display: "none" },
+              }}
+            />
+            <Drawer.Screen name="Gestion des users" component={Gestion_User} />
+          </Drawer.Navigator>
+        </NavigationContainer>
+      ) : (
+        <View>
+          <OwnTextInput label="Login" onChangeText={setLogin} />
+          <OwnTextInput label="Password" onChangeText={setPassword} />
+          <Button
+            variant="outlined"
+            title="Connection"
+            style={styles.button}
+            onPress={auth}
+          />
+        </View>
+      )}
+    </>
   );
 }
 
-/*import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View} from 'react-native';
-import { FlatList } from 'react-native-web';
-import {TabNavigator} from 'react-navigation';
-import Home from './App/Views/Home';
-
-export default function App() {
-
-  const Tabs = TabNavigator({
-    Home: {screen: Home}
-  })
-
-
-  return (
-    <View>
-      <Tabs/>
-    </View> 
-  );
-}*/
+const styles = StyleSheet.create({
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginHorizontal: 24,
+    marginBottom: 24,
+  },
+});
