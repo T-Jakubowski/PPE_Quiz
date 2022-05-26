@@ -8,6 +8,7 @@ export default OwnTextInput = ({
   onChangeText,
   style,
   label,
+  isPassword,
   errorMsg,
 }) => {
   const [isFocus, setIsFocus] = useState(false);
@@ -15,6 +16,7 @@ export default OwnTextInput = ({
     <View style={styles.view}>
       <Text>{label}</Text>
       <TextInput
+        secureTextEntry={isPassword}
         key={key}
         style={[isFocus ? styles.inputFocus : null, styles.input, style]}
         value={value}
