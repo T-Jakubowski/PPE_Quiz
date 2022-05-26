@@ -20,6 +20,20 @@ const Gestion_Role = ({ navigation }) => {
 
   const urlGetRoles = `${BASE_API}/roles/readall`;
 
+  const isValidAdd = () => {
+    const permissionRegex = /[0-1]{8}/;
+    return name && permissionRegex.test(permission) && permission.length == 8;
+  };
+
+  const isValidUpdate = () => {
+    const permissionRegex = /[0-1]{8}/;
+    return (
+      roleNameToUpdate &&
+      permissionRegex.test(roleThemeToUpdate) &&
+      roleThemeToUpdate.length == 8
+    );
+  };
+
   const getRoles = async () =>
     await axios
       .get(urlGetRoles)
@@ -96,8 +110,12 @@ const Gestion_Role = ({ navigation }) => {
 
       <Modal animationType="slide" transparent={true} visible={isVisibleAdd}>
         <View style={{ backgroundColor: "white", flex: 1 }}>
-          <OwnTextInput label="Permission" onChangeText={setPermission} />
-          <OwnTextInput label="Name" onChangeText={setName} />
+          <OwnTextInput
+            label="Permission"
+            onChangeText={setPermission}
+            value={permission}
+          />
+          <OwnTextInput label="Name" onChangeText={setName} value={name} />
           <View style={styles.buttonContainer}>
             <Button
               variant="outlined"
@@ -111,6 +129,7 @@ const Gestion_Role = ({ navigation }) => {
               title="Valider"
               style={styles.button}
               onPress={() => onPressAdd()}
+              disabled={!isValidAdd()}
             />
           </View>
         </View>
@@ -141,6 +160,7 @@ const Gestion_Role = ({ navigation }) => {
               title="Valider"
               style={styles.button}
               onPress={() => onPressUpdate()}
+              disabled={!isValidUpdate()}
             />
           </View>
         </View>
