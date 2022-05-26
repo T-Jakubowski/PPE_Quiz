@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { stringMd5 } from 'react-native-quick-md5';
+import { stringMd5 } from "react-native-quick-md5";
 
 import { Text, View, StyleSheet, Modal, ScrollView } from "react-native";
 import { Button } from "@react-native-material/core";
@@ -7,6 +7,7 @@ import OwnTextInput from "../components/TextInput";
 import axios from "axios";
 import { BASE_API } from "@env";
 import DisplayQuizzes from "../components/DisplayQuizzes";
+import ConfirmationModal from "../components/ConfimationModal";
 
 const Gestion_User = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
@@ -14,6 +15,9 @@ const Gestion_User = ({ navigation }) => {
   const [users, setUsers] = useState();
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState();
+
+  const [isVisibleDelete, setIsVisibleDelete] = useState(false);
+  const [userIdDelete, setUserIdDelete] = useState(false);
 
   const [usersIdToUpdate, setUsersIdToUpdate] = useState("");
   const [userFirstNameToUpdate, setUserFirstNameToUpdate] = useState("");
@@ -108,7 +112,7 @@ const Gestion_User = ({ navigation }) => {
                     onPressView={() =>
                       navigation.navigate("Gestion_Question", quiz)
                     }
-                    onPressDelete={() => onPressDelete(quiz._id)}
+                    onPressDelete={() => {setIsVisibleDelete(true); setUserIdDelete(quiz._id)}}
                     onPressUpdate={() => {
                       setIsVisibleUpdate(true);
                       setUsersIdToUpdate(quiz._id);
@@ -128,6 +132,16 @@ const Gestion_User = ({ navigation }) => {
         style={styles.button}
         onPress={() => {
           setIsVisibleAdd(true);
+        }}
+      />
+
+      <ConfirmationModal
+        text={"Êtes-vous sur de vouloir le supprimer ?"}
+        isVisible={isVisibleDelete}
+        onPressNo={() => setIsVisibleDelete(false)}
+        onPressYes={() => {
+          onPressDelete(userIdDelete);
+          setIsVisibleDelete(false);
         }}
       />
 
