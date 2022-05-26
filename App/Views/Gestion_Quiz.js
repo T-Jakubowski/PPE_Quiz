@@ -5,6 +5,7 @@ import OwnTextInput from "../components/TextInput";
 import axios from "axios";
 import { BASE_API } from "@env";
 import DisplayQuizzes from "../components/DisplayQuizzes";
+import ConfirmationModal from "../components/ConfimationModal";
 
 const Gestion_Quiz = ({ navigation }) => {
   const [theme, setTheme] = useState("");
@@ -17,8 +18,11 @@ const Gestion_Quiz = ({ navigation }) => {
   const [quizNameToUpdate, setQuizNameToUpdate] = useState("");
   const [quizThemeToUpdate, setQuizThemeToUpdate] = useState("");
 
+  const [quizIdDelete, setQuizIdDelete] = useState();
+
   const [isVisibleAdd, setIsVisibleAdd] = useState(false);
   const [isVisibleUpdate, setIsVisibleUpdate] = useState(false);
+  const [isVisibleDelete, setIsVisibleDelete] = useState(false);
 
   const urlGetQuizzes = `${BASE_API}/quiz/readall`;
 
@@ -58,9 +62,13 @@ const Gestion_Quiz = ({ navigation }) => {
   };
 
   const onPressDelete = async (id) => {
-    const url = `${BASE_API}/quiz/delete/${id}`;
-    const response = await axios
-      .delete(url)
+    const urlQuiz = `${BASE_API}/quiz/delete/${id}`;
+    const responseQuiz = await axios
+      .delete(urlQuiz)
+      .catch((error) => console.log(error));
+    const urlQuestions = `${BASE_API}/questions/deleteall/${id}`;
+    const responseQuestions = await axios
+      .delete(urlQuestions)
       .catch((error) => console.log(error));
     getQuizzes();
   };
@@ -93,7 +101,10 @@ const Gestion_Quiz = ({ navigation }) => {
                     onPressView={() =>
                       navigation.navigate("Gestion_Question", quiz)
                     }
-                    onPressDelete={() => onPressDelete(quiz._id)}
+                    onPressDelete={() => {
+                      setQuizIdDelete(quiz._id);
+                      setIsVisibleDelete(true);
+                    }}
                     onPressUpdate={() => {
                       setIsVisibleUpdate(true);
                       setQuizIdToUpdate(quiz._id);
@@ -106,7 +117,15 @@ const Gestion_Quiz = ({ navigation }) => {
             })
           : null}
       </ScrollView>
-
+      <ConfirmationModal
+        text={"Êtes-vous sur de vouloir le supprimer ?"}
+        isVisible={isVisibleDelete}
+        onPressNo={() => setIsVisibleDelete(false)}
+        onPressYes={() => {
+          onPressDelete(quizIdDelete);
+          setIsVisibleDelete(false);
+        }}
+      />
       <Button
         variant="outlined"
         title="Ajouter"

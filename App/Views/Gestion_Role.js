@@ -5,11 +5,15 @@ import OwnTextInput from "../components/TextInput";
 import axios from "axios";
 import { BASE_API } from "@env";
 import DisplayQuizzes from "../components/DisplayQuizzes";
+import ConfimationModal from "../components/ConfimationModal";
 
 const Gestion_Role = ({ navigation }) => {
   const [permission, setPermission] = useState("");
   const [name, setName] = useState("");
   const [roles, setRoles] = useState();
+
+  const [isVisibleDelete, setIsVisibleDelete] = useState(false);
+  const [roleIdDelete, setRoleIdDelete] = useState(false);
 
   const [roleIdToUpdate, setRoleIdToUpdate] = useState("");
   const [roleNameToUpdate, setRoleNameToUpdate] = useState("");
@@ -85,7 +89,7 @@ const Gestion_Role = ({ navigation }) => {
                     key={quiz._id.toString()}
                     name={quiz.name}
                     theme={quiz.permission}
-                    onPressDelete={() => onPressDelete(quiz._id)}
+                    onPressDelete={() =>{setIsVisibleDelete(true), setRoleIdDelete(quiz._id)}}
                     onPressUpdate={() => {
                       setIsVisibleUpdate(true);
                       setRoleIdToUpdate(quiz._id);
@@ -105,6 +109,16 @@ const Gestion_Role = ({ navigation }) => {
         style={styles.button}
         onPress={() => {
           setIsVisibleAdd(true);
+        }}
+      />
+
+      <ConfirmationModal
+        text={"Êtes-vous sur de vouloir le supprimer ?"}
+        isVisible={isVisibleDelete}
+        onPressNo={() => setIsVisibleDelete(false)}
+        onPressYes={() => {
+          onPressDelete(roleIdDelete);
+          setIsVisibleDelete(false);
         }}
       />
 

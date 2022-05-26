@@ -5,14 +5,17 @@ import OwnTextInput from "../components/TextInput";
 import axios from "axios";
 import { BASE_API } from "@env";
 import DisplayQuizzes from "../components/DisplayQuizzes";
+import ConfimationModal from "../components/ConfimationModal";
 
 export default function test({ route, navigation }) {
-  const [idQuiz, setIdQuiz] = useState(route.params._id);
   const [questions, setQuestions] = useState("");
   const [questionAdd, setQuestionAdd] = useState("");
   const [correctAnswer, setCorrectAnswer] = useState("");
   const [reponsesAdd, setReponsesAdd] = useState(["", ""]);
   const [isVisibleAdd, setIsVisibleAdd] = useState(false);
+
+  const [isVisibleDelete, setIsVisibleDelete] = useState(false);
+  const [questionIdDelete, setQuestionIdDelete] = useState();
 
   const [reponsesUpdate, setReponsesUpdate] = useState(["", ""]);
   const [questionUpdate, setQuestionUpdate] = useState("");
@@ -20,17 +23,16 @@ export default function test({ route, navigation }) {
   const [questionIdToUpdate, setQuestionIdToUpdate] = useState("");
   const [isVisibleUpdate, setIsVisibleUpdate] = useState(false);
 
-  const urlGetQuestions = `${BASE_API}/questions/readall/${idQuiz}`;
-
+  const urlGetQuestions = `${BASE_API}/questions/readall/${route.params._id}`;
   const getQuestions = async () =>
     await axios
       .get(urlGetQuestions)
-      .then((response) => setQuestions(response.data))
+      .then((response) => {setQuestions(response.data); console.log("second")})
       .catch((error) => console.log(error)).data;
 
   useEffect(() => {
     getQuestions();
-  }, []);
+  }, [route.params._id]);
 
   const question = () => {
     let input = [];
@@ -39,6 +41,7 @@ export default function test({ route, navigation }) {
         <OwnTextInput
           label={`Reponse ${index}`}
           key={`Reponse ${index}`}
+          value={reponsesAdd[index-1]}
           onChangeText={(text) => {
             setReponsesAdd(() => {
               let array = [];
@@ -77,7 +80,7 @@ export default function test({ route, navigation }) {
                   array.push(reponsesUpdate[i - 1]);
                 }
               }
-              
+
               return array;
             });
             getQuestions();
@@ -103,11 +106,10 @@ export default function test({ route, navigation }) {
       urlArray += `&options[${i}]=${reponsesUpdate[i]}`;
     }
     const url = `${BASE_API}/questions/update/${questionIdToUpdate}`;
-    const body = `question=${questionUpdate}&correct_option=${correctAnswerUpdate}${urlArray}&quiz_id=${idQuiz}`;
+    const body = `question=${questionUpdate}&correct_option=${correctAnswerUpdate}${urlArray}&quiz_id=${route.params._id}`;
     const response = await axios
       .patch(url, body)
       .catch((error) => console.log(error));
-    getQuestions();
     setIsVisibleUpdate(false);
   };
 
@@ -117,12 +119,14 @@ export default function test({ route, navigation }) {
     for (let i = 0; i < reponsesAdd.length; i++) {
       urlArray += `&options[${i}]=${reponsesAdd[i]}`;
     }
-    const body = `question=${questionAdd}&correct_option=${correctAnswer}${urlArray}&quiz_id=${idQuiz}`;
-    console.log(body);
+    const body = `question=${questionAdd}&correct_option=${correctAnswer}${urlArray}&quiz_id=${route.params._id}`;
     await axios.post(urlAddQuestions, body).catch((error) => console.log(error))
       .data;
-    getQuestions();
     setIsVisibleAdd(false);
+    setReponsesAdd(["", ""]);
+    setQuestionAdd("");
+    setCorrectAnswer("");
+    getQuestions();
   };
 
   const isDisabled = () => {
@@ -142,7 +146,10 @@ export default function test({ route, navigation }) {
                     key={question._id.toString()}
                     name={question.question}
                     theme={question.correct_option}
-                    onPressDelete={() => onPressDelete(question._id)}
+                    onPressDelete={() => {
+                      setIsVisibleDelete(true);
+                      setQuestionIdDelete(question._id);
+                    }}
                     onPressUpdate={() => {
                       setIsVisibleUpdate(true);
                       setQuestionIdToUpdate(question._id);
@@ -172,12 +179,23 @@ export default function test({ route, navigation }) {
         />
       </View>
 
+      <ConfirmationModal
+        text={"Êtes-vous sur de vouloir le supprimer ?"}
+        isVisible={isVisibleDelete}
+        onPressNo={() => setIsVisibleDelete(false)}
+        onPressYes={() => {
+          onPressDelete(questionIdDelete);
+          setIsVisibleDelete(false);
+        }}
+      />
+
       <Modal animationType="slide" transparent={true} visible={isVisibleAdd}>
         <View style={{ backgroundColor: "white", flex: 1 }}>
-          <OwnTextInput label="Question" onChangeText={setQuestionAdd} />
+          <OwnTextInput label="Question" onChangeText={setQuestionAdd} value={questionAdd} />
           <OwnTextInput
             label="Réponse Correct"
             onChangeText={setCorrectAnswer}
+            value={correctAnswer}
           />
           {question()}
 
