@@ -68,15 +68,16 @@ export default function test({ route, navigation }) {
           value={reponsesUpdate[index - 1]}
           key={`Reponse ${index}`}
           onChangeText={(text) => {
-            setReponsesAdd(() => {
+            setReponsesUpdate(() => {
               let array = [];
-              for (let i = 1; i < reponsesAdd.length + 1; i++) {
+              for (let i = 1; i < reponsesUpdate.length + 1; i++) {
                 if (i == index) {
                   array.push(text);
                 } else {
                   array.push(reponsesUpdate[i - 1]);
                 }
               }
+              
               return array;
             });
             getQuestions();
@@ -288,24 +289,6 @@ export default function test({ route, navigation }) {
           </View>
         </View>
       </Modal>
-
-      {/* <View style={{ backgroundColor: "white", flex: 1 }}>
-      <OwnTextInput label="Theme" onChangeText={setTheme} />
-      <OwnTextInput label="Name" onChangeText={setName} />
-
-      <Button
-        variant="outlined"
-        title="Valider"
-        style={styles.button}
-      />
-
-      <Button
-        variant="outlined"
-        title="exit"
-        style={styles.button}
-        onPress={() => setIsVisible(false)}
-      />
-    </View> */}
     </View>
   );
 }

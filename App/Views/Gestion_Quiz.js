@@ -11,6 +11,8 @@ const Gestion_Quiz = ({ navigation }) => {
   const [name, setName] = useState("");
   const [quizzes, setQuizzes] = useState();
 
+  const [errorMsg, setErrorMsg] = useState("");
+
   const [quizIdToUpdate, setQuizIdToUpdate] = useState("");
   const [quizNameToUpdate, setQuizNameToUpdate] = useState("");
   const [quizThemeToUpdate, setQuizThemeToUpdate] = useState("");
@@ -30,15 +32,29 @@ const Gestion_Quiz = ({ navigation }) => {
     getQuizzes();
   }, []);
 
+  const IsValidAdd = () => {
+    return theme.length > 0 && name.length > 0;
+  };
+
+  const IsValidUpdate = () => {
+    return quizThemeToUpdate.length > 0 && quizNameToUpdate.length > 0;
+  };
+
   const onPressAdd = async () => {
-    const url = `${BASE_API}/quiz/create`;
-    const body = `name=${name}&theme=${theme}`;
-    const response = await axios
-      .post(url, body)
-      .catch((error) => console.log(error));
-    console.log(response.data);
-    getQuizzes();
-    setIsVisibleAdd(false);
+    if (IsValidAdd()) {
+      const url = `${BASE_API}/quiz/create`;
+      const body = `name=${name}&theme=${theme}`;
+      const response = await axios
+        .post(url, body)
+        .catch((error) => console.log(error));
+      console.log(response.data);
+      getQuizzes();
+      setName("");
+      setTheme("");
+      setIsVisibleAdd(false);
+    } else {
+      setErrorMsg("Un champ n'est pas rempli !");
+    }
   };
 
   const onPressDelete = async (id) => {
@@ -50,13 +66,17 @@ const Gestion_Quiz = ({ navigation }) => {
   };
 
   const onPressUpdate = async () => {
-    const url = `${BASE_API}/quiz/update/${quizIdToUpdate}`;
-    const body = `name=${quizNameToUpdate}&theme=${quizThemeToUpdate}`;
-    const response = await axios
-      .patch(url, body)
-      .catch((error) => console.log(error));
-    getQuizzes();
-    setIsVisibleUpdate(false);
+    if (IsValidUpdate()) {
+      const url = `${BASE_API}/quiz/update/${quizIdToUpdate}`;
+      const body = `name=${quizNameToUpdate}&theme=${quizThemeToUpdate}`;
+      const response = await axios
+        .patch(url, body)
+        .catch((error) => console.log(error));
+      getQuizzes();
+      setIsVisibleUpdate(false);
+    } else {
+      setErrorMsg("Un champ n'est pas rempli !");
+    }
   };
 
   return (
@@ -98,14 +118,17 @@ const Gestion_Quiz = ({ navigation }) => {
 
       <Modal animationType="slide" transparent={true} visible={isVisibleAdd}>
         <View style={{ backgroundColor: "white", flex: 1 }}>
-          <OwnTextInput label="Theme" onChangeText={setTheme} />
-          <OwnTextInput label="Name" onChangeText={setName} />
+          <OwnTextInput label="Theme" onChangeText={setTheme} value={theme} />
+          <OwnTextInput label="Name" onChangeText={setName} value={name} />
           <View style={styles.buttonContainer}>
             <Button
               variant="outlined"
               title="exit"
               style={styles.button}
-              onPress={() => setIsVisibleAdd(false)}
+              onPress={() => {
+                setIsVisibleAdd(false);
+                setErrorMsg("");
+              }}
             />
 
             <Button
@@ -113,8 +136,10 @@ const Gestion_Quiz = ({ navigation }) => {
               title="Valider"
               style={styles.button}
               onPress={() => onPressAdd()}
+              disabled={!IsValidAdd()}
             />
           </View>
+          {errorMsg ? <Text style={styles.errorMsg}>{errorMsg}</Text> : null}
         </View>
       </Modal>
 
@@ -135,7 +160,10 @@ const Gestion_Quiz = ({ navigation }) => {
               variant="outlined"
               title="exit"
               style={styles.button}
-              onPress={() => setIsVisibleUpdate(false)}
+              onPress={() => {
+                setIsVisibleUpdate(false);
+                setErrorMsg("");
+              }}
             />
 
             <Button
@@ -143,8 +171,10 @@ const Gestion_Quiz = ({ navigation }) => {
               title="Valider"
               style={styles.button}
               onPress={() => onPressUpdate()}
+              disabled={!IsValidUpdate()}
             />
           </View>
+          {errorMsg ? <Text style={styles.errorMsg}>{errorMsg}</Text> : null}
         </View>
       </Modal>
     </View>
@@ -169,6 +199,10 @@ const styles = StyleSheet.create({
   backButton: {
     marginTop: 16,
     width: "30%",
+  },
+  errorMsg: {
+    color: "red",
+    alignSelf: "center",
   },
 });
 export default Gestion_Quiz;
