@@ -34,16 +34,37 @@ const Gestion_User = ({ navigation }) => {
     getUsers();
   }, []);
 
+  const isValidUpdate = () => {
+    return (
+      userFirstNameToUpdate &&
+      userLastNameToUpdate &&
+      userLoginToUpdate &&
+      userPasswordToUpdate.length > 7
+    );
+  };
+
+  const isValidAdd = () => {
+    return firstName && lastName && login && password.length > 7;
+  };
+
   const onPressAdd = async () => {
-    const url = `${BASE_API}/users/create`;
-    console.log(url);
-    const body = `lastName=${lastName}&firstName=${firstName}&password=${password}&login=${login}`;
-    const response = await axios
-      .post(url, body)
-      .catch((error) => console.log(error));
-    console.log(response.data);
-    getUsers();
-    setIsVisibleAdd(false);
+    console.log(firstName);
+    console.log(isValidAdd());
+    if (isValidAdd()) {
+      const url = `${BASE_API}/users/create`;
+      console.log(url);
+      const body = `lastName=${lastName}&firstName=${firstName}&password=${password}&login=${login}`;
+      const response = await axios
+        .post(url, body)
+        .catch((error) => console.log(error));
+      console.log(response.data);
+      getUsers();
+      setIsVisibleAdd(false);
+      setPassword("");
+      setLogin("");
+      setFirstName("");
+      setLastName("");
+    }
   };
 
   const onPressDelete = async (id) => {
@@ -55,15 +76,21 @@ const Gestion_User = ({ navigation }) => {
   };
 
   const onPressUpdate = async () => {
-    const url = `${BASE_API}/users/update/${usersIdToUpdate}`;
-    console.log(url);
-    const body = `firstName=${userFirstNameToUpdate}&lastName=${userLastNameToUpdate}&login=${userLoginToUpdate}&password=${userPasswordToUpdate}`;
-    console.log(body)
-    const response = await axios
-      .patch(url, body)
-      .catch((error) => console.log(error));
-    getUsers();
-    setIsVisibleUpdate(false);
+    if (isValidUpdate()) {
+      const url = `${BASE_API}/users/update/${usersIdToUpdate}`;
+      console.log(url);
+      const body = `firstName=${userFirstNameToUpdate}&lastName=${userLastNameToUpdate}&login=${userLoginToUpdate}&password=${userPasswordToUpdate}`;
+      console.log(body);
+      const response = await axios
+        .patch(url, body)
+        .catch((error) => console.log(error));
+      getUsers();
+      setIsVisibleUpdate(false);
+      setUserFirstNameToUpdate("");
+      setUserLastNameToUpdate("");
+      setUserLoginToUpdate("");
+      setUserPasswordToUpdate("");
+    }
   };
 
   return (
@@ -105,10 +132,23 @@ const Gestion_User = ({ navigation }) => {
 
       <Modal animationType="slide" transparent={true} visible={isVisibleAdd}>
         <View style={{ backgroundColor: "white", flex: 1 }}>
-          <OwnTextInput label="Theme" onChangeText={setFirstName} />
-          <OwnTextInput label="Name" onChangeText={setLastName} />
-          <OwnTextInput label="Login" onChangeText={setLogin} />
-          <OwnTextInput label="Password" onChangeText={setPassword} />
+          <OwnTextInput
+            label="Theme"
+            onChangeText={setFirstName}
+            value={firstName}
+          />
+          <OwnTextInput
+            label="Name"
+            onChangeText={setLastName}
+            value={lastName}
+          />
+          <OwnTextInput label="Login" onChangeText={setLogin} value={login} />
+          <OwnTextInput
+            label="Password"
+            onChangeText={setPassword}
+            isPassword={true}
+            value={password}
+          />
           <View style={styles.buttonContainer}>
             <Button
               variant="outlined"
@@ -121,7 +161,10 @@ const Gestion_User = ({ navigation }) => {
               variant="outlined"
               title="Valider"
               style={styles.button}
-              onPress={() => onPressAdd()}
+              onPress={() => {
+                onPressAdd();
+              }}
+              disabled={!isValidAdd()}
             />
           </View>
         </View>
@@ -139,10 +182,16 @@ const Gestion_User = ({ navigation }) => {
             onChangeText={setUserFirstNameToUpdate}
             value={userFirstNameToUpdate}
           />
-          <OwnTextInput label="Login" onChangeText={setUserLoginToUpdate} />
+          <OwnTextInput
+            label="Login"
+            onChangeText={setUserLoginToUpdate}
+            value={userLoginToUpdate}
+          />
           <OwnTextInput
             label="Password"
             onChangeText={setUserPasswordToUpdate}
+            isPassword={true}
+            value={userPasswordToUpdate}
           />
           <View style={styles.buttonContainer}>
             <Button
@@ -156,7 +205,10 @@ const Gestion_User = ({ navigation }) => {
               variant="outlined"
               title="Valider"
               style={styles.button}
-              onPress={() => onPressUpdate()}
+              onPress={() => {
+                onPressUpdate();
+              }}
+              disabled={!isValidUpdate()}
             />
           </View>
         </View>
