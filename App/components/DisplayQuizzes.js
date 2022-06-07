@@ -19,12 +19,20 @@ export default DisplayQuizzes = ({
         </View>
 
         <View style={styles.row}>
-          <Button onPress={onPressUpdate} variant="outlined" title="Modifier" />
-          <Button
-            onPress={onPressDelete}
-            variant="outlined"
-            title="Supprimer"
-          />
+          {onPressUpdate ? (
+            <Button
+              onPress={onPressUpdate}
+              variant="outlined"
+              title="Modifier"
+            />
+          ) : null}
+          {onPressDelete ? (
+            <Button
+              onPress={onPressDelete}
+              variant="outlined"
+              title="Supprimer"
+            />
+          ) : null}
         </View>
       </View>
     </TouchableOpacity>

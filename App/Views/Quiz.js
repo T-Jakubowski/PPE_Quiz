@@ -26,7 +26,7 @@ export default function Quiz({ navigation }) {
   }, []);
 
   const [show, setShow] = useState(true);
-  const [allQuestions, setAllQuestions] = useState([]);
+  const [allQuestions, setAllQuestions] = useState([{question: '', options: ['']}]);
   const [CurrentQuestionIndex, SetCurrentQuestionIndex] = useState(0);
   const [CurrentOptionSelected, SetCurrentOptionSelected] = useState(null);
   const [CorrectOption, SetCorrectOption] = useState(null);
@@ -242,11 +242,9 @@ export default function Quiz({ navigation }) {
 
   const showQuiz = async (idQuiz) => {
     const urlGetQuestions = `${BASE_API}/questions/readall/${idQuiz}`;
-    const getQuestions = await axios
+    await axios
       .get(urlGetQuestions)
-      .then((response) => {
-        setAllQuestions(response.data);
-      })
+      .then((response) => setAllQuestions(response.data))
       .catch((error) => console.log(error)).data;
     setShow(false);
     SetShouldShow(true);

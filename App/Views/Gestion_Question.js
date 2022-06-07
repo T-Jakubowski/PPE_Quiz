@@ -27,7 +27,7 @@ export default function test({ route, navigation }) {
   const getQuestions = async () =>
     await axios
       .get(urlGetQuestions)
-      .then((response) => {setQuestions(response.data); console.log("second")})
+      .then((response) => {setQuestions(response.data); console.log(questions)})
       .catch((error) => console.log(error)).data;
 
   useEffect(() => {

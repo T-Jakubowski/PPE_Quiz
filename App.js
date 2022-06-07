@@ -13,6 +13,7 @@ import Gestion_Quiz from "./App/Views/Gestion_Quiz";
 import Gestion_Role from "./App/Views/Gestion_Role";
 import Gestion_User from "./App/Views/Gestion_User";
 import Gestion_Question from "./App/Views/Gestion_Question";
+import { stringMd5 } from "react-native-quick-md5";
 
 export default function App() {
   const Drawer = createDrawerNavigator();
@@ -24,10 +25,11 @@ export default function App() {
   const auth = async () => {
     const url = `${BASE_API}/users/login`;
     console.log(url);
-    const body = `password=${password}&login=${login}`;
+    const passwordHash = stringMd5(password);
+    const body = `password=${passwordHash}&login=${login}`;
     const response = await axios
       .post(url, body)
-      .then((response) => { if(response.data.length > 0){setCan(true)} })
+      .then((response) => { if(response.data.length > 0){setCan(true)} console.log(response.data) })
       .catch((error) => console.log(error));
   };
 

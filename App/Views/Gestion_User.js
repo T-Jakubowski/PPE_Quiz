@@ -14,7 +14,7 @@ const Gestion_User = ({ navigation }) => {
   const [lastName, setLastName] = useState("");
   const [users, setUsers] = useState();
   const [login, setLogin] = useState("");
-  const [password, setPassword] = useState();
+  const [password, setPassword] = useState("");
 
   const [isVisibleDelete, setIsVisibleDelete] = useState(false);
   const [userIdDelete, setUserIdDelete] = useState(false);
@@ -148,12 +148,12 @@ const Gestion_User = ({ navigation }) => {
       <Modal animationType="slide" transparent={true} visible={isVisibleAdd}>
         <View style={{ backgroundColor: "white", flex: 1 }}>
           <OwnTextInput
-            label="Theme"
+            label="Prenom"
             onChangeText={setFirstName}
             value={firstName}
           />
           <OwnTextInput
-            label="Name"
+            label="Nom"
             onChangeText={setLastName}
             value={lastName}
           />
