@@ -13,8 +13,10 @@ const Gestion_User = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [users, setUsers] = useState();
+  const [roles, setRoles] = useState();
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
+  const [roleId, setRoleId] = useState("");
 
   const [isVisibleDelete, setIsVisibleDelete] = useState(false);
   const [userIdDelete, setUserIdDelete] = useState(false);
@@ -36,8 +38,16 @@ const Gestion_User = ({ navigation }) => {
       .then((response) => setUsers(response.data))
       .catch((error) => console.log(error));
 
+  const urlGetRoles = `${BASE_API}/roles/readall`;
+  const getRoles = async () =>
+    await axios
+      .get(urlGetRoles)
+      .then((response) => setRoles(response.data))
+      .catch((error) => console.log(error));
+
   useEffect(() => {
     getUsers();
+    getRoles();
   }, []);
 
   const isValidUpdate = () => {
@@ -49,16 +59,35 @@ const Gestion_User = ({ navigation }) => {
     );
   };
 
+  const isSameLogin= () => {
+    var verification = false;
+    users.map((user) => {
+      if (user._id == login) {
+        verification = true;
+      }
+    });
+    return verification;
+  };
+
+  const IsSameRole = () => {
+    var verification = false;
+    roles.map((role) => {
+      if (role._id == roleId) {
+        verification = true;
+      }
+    });
+    return verification;
+  };
+
   const isValidAdd = () => {
-    return firstName && lastName && login && password.length > 7;
+    return firstName && lastName && login && password.length > 7 && IsSameRole() && !isSameLogin();
   };
 
   const onPressAdd = async () => {
     if (isValidAdd()) {
       const url = `${BASE_API}/users/create`;
       const passwordHash = stringMd5(password);
-      console.log(url);
-      const body = `lastName=${lastName}&firstName=${firstName}&password=${passwordHash}&login=${login}`;
+      const body = `lastName=${lastName}&firstName=${firstName}&password=${passwordHash}&_id=${login}&role_id=${roleId}`;
       const response = await axios
         .post(url, body)
         .catch((error) => console.log(error));
@@ -69,6 +98,7 @@ const Gestion_User = ({ navigation }) => {
       setLogin("");
       setFirstName("");
       setLastName("");
+      setRoleId("");
     }
   };
 
@@ -109,10 +139,10 @@ const Gestion_User = ({ navigation }) => {
                     key={quiz._id.toString()}
                     name={quiz.firstName}
                     theme={quiz.lastName}
-                    onPressView={() =>
-                      navigation.navigate("Gestion_Question", quiz)
-                    }
-                    onPressDelete={() => {setIsVisibleDelete(true); setUserIdDelete(quiz._id)}}
+                    onPressDelete={() => {
+                      setIsVisibleDelete(true);
+                      setUserIdDelete(quiz._id);
+                    }}
                     onPressUpdate={() => {
                       setIsVisibleUpdate(true);
                       setUsersIdToUpdate(quiz._id);
@@ -157,12 +187,25 @@ const Gestion_User = ({ navigation }) => {
             onChangeText={setLastName}
             value={lastName}
           />
-          <OwnTextInput label="Login" onChangeText={setLogin} value={login} />
+          <OwnTextInput
+            label="Login"
+            onChangeText={(text) => {
+              setLogin(text);
+            }}
+            value={login}
+          />
           <OwnTextInput
             label="Password"
             onChangeText={setPassword}
             isPassword={true}
             value={password}
+          />
+          <OwnTextInput
+            label="Role"
+            onChangeText={(text) => {
+              setRoleId(text);
+            }}
+            value={roleId}
           />
           <View style={styles.buttonContainer}>
             <Button
