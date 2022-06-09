@@ -10,12 +10,14 @@ export default OwnTextInput = ({
   label,
   isPassword,
   errorMsg,
+  disable,
 }) => {
   const [isFocus, setIsFocus] = useState(false);
   return (
     <View style={styles.view}>
       <Text>{label}</Text>
       <TextInput
+        editable={!disable}
         secureTextEntry={isPassword}
         key={key}
         style={[isFocus ? styles.inputFocus : null, styles.input, style]}
@@ -25,7 +27,7 @@ export default OwnTextInput = ({
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
       />
-      {errorMsg ? (<Text style={styles.errorMsg}>{errorMsg}</Text>) : null }
+      {errorMsg ? <Text style={styles.errorMsg}>{errorMsg}</Text> : null}
     </View>
   );
 };
@@ -35,7 +37,7 @@ const styles = StyleSheet.create({
     margin: 12,
   },
   errorMsg: {
-    color: 'red',
+    color: "red",
   },
   input: {
     paddingLeft: 8,

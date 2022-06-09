@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, ScrollView, Modal } from "react-native";
+import { View, StyleSheet, ScrollView, Modal } from "react-native";
 import { Button } from "@react-native-material/core";
 import OwnTextInput from "../components/TextInput";
 import axios from "axios";
 import { BASE_API } from "@env";
 import DisplayQuizzes from "../components/DisplayQuizzes";
-import ConfimationModal from "../components/ConfimationModal";
 
 export default function test({ route, navigation }) {
   const [questions, setQuestions] = useState("");
@@ -27,7 +26,7 @@ export default function test({ route, navigation }) {
   const getQuestions = async () =>
     await axios
       .get(urlGetQuestions)
-      .then((response) => {setQuestions(response.data); console.log(questions)})
+      .then((response) => {setQuestions(response.data)})
       .catch((error) => console.log(error)).data;
 
   useEffect(() => {
@@ -80,7 +79,6 @@ export default function test({ route, navigation }) {
                   array.push(reponsesUpdate[i - 1]);
                 }
               }
-
               return array;
             });
             getQuestions();
@@ -92,7 +90,6 @@ export default function test({ route, navigation }) {
   };
 
   const onPressDelete = async (id) => {
-    console.log(id);
     const url = `${BASE_API}/questions/delete/${id}`;
     const response = await axios
       .delete(url)
@@ -107,10 +104,12 @@ export default function test({ route, navigation }) {
     }
     const url = `${BASE_API}/questions/update/${questionIdToUpdate}`;
     const body = `question=${questionUpdate}&correct_option=${correctAnswerUpdate}${urlArray}&quiz_id=${route.params._id}`;
+    console.log(body);
     const response = await axios
       .patch(url, body)
       .catch((error) => console.log(error));
     setIsVisibleUpdate(false);
+    getQuestions();
   };
 
   const onPressAdd = async () => {
@@ -144,8 +143,8 @@ export default function test({ route, navigation }) {
                 <View>
                   <DisplayQuizzes
                     key={question._id.toString()}
-                    name={question.question}
-                    theme={question.correct_option}
+                    title={question.question}
+                    text={"Réponse Correct : " + question.correct_option}
                     onPressDelete={() => {
                       setIsVisibleDelete(true);
                       setQuestionIdDelete(question._id);

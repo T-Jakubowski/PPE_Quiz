@@ -7,10 +7,11 @@ import { BASE_API } from "@env";
 import DisplayQuizzes from "../components/DisplayQuizzes";
 import ConfimationModal from "../components/ConfimationModal";
 
-const Gestion_Role = ({ navigation }) => {
+const Gestion_Role = () => {
   const [permission, setPermission] = useState("");
   const [name, setName] = useState("");
   const [roles, setRoles] = useState();
+  const [roleId, setRoleId] = useState("");
 
   const [isVisibleDelete, setIsVisibleDelete] = useState(false);
   const [roleIdDelete, setRoleIdDelete] = useState(false);
@@ -26,7 +27,14 @@ const Gestion_Role = ({ navigation }) => {
 
   const isValidAdd = () => {
     const permissionRegex = /[0-1]{8}/;
-    return name && permissionRegex.test(permission) && permission.length == 8;
+    const roleIdRegex = /^\d+$/;
+
+    return (
+      name &&
+      permissionRegex.test(permission) &&
+      permission.length == 8 &&
+      roleIdRegex.test(roleId)
+    );
   };
 
   const isValidUpdate = () => {
@@ -48,15 +56,30 @@ const Gestion_Role = ({ navigation }) => {
     getRoles();
   }, []);
 
+  const isSameId = () => {
+    var verification = false;
+    roles.map((role) => {
+      if (role._id == roleId) {
+        verification = true;
+      }
+    });
+    return verification;
+  };
+
   const onPressAdd = async () => {
-    const url = `${BASE_API}/roles/create`;
-    const body = `name=${name}&permission=${permission}`;
-    const response = await axios
-      .post(url, body)
-      .catch((error) => console.log(error));
-    console.log(response.data);
-    getRoles();
-    setIsVisibleAdd(false);
+    if (isValidAdd && !isSameId()) {
+      const url = `${BASE_API}/roles/create`;
+      const body = `name=${name}&permission=${permission}&_id=${roleId}`;
+      const response = await axios
+        .post(url, body)
+        .catch((error) => console.log(error));
+      console.log(response.data);
+      getRoles();
+      setIsVisibleAdd(false);
+      setName("");
+      setPermission("");
+      setRoleId("");
+    }
   };
 
   const onPressDelete = async (id) => {
@@ -70,7 +93,7 @@ const Gestion_Role = ({ navigation }) => {
   const onPressUpdate = async () => {
     const url = `${BASE_API}/roles/update/${roleIdToUpdate}`;
     console.log(url);
-    const body = `name=${roleNameToUpdate}&theme=${roleThemeToUpdate}`;
+    const body = `name=${roleNameToUpdate}&permission=${roleThemeToUpdate}`;
     const response = await axios
       .patch(url, body)
       .catch((error) => console.log(error));
@@ -86,10 +109,13 @@ const Gestion_Role = ({ navigation }) => {
               return (
                 <View>
                   <DisplayQuizzes
-                    key={quiz._id.toString()}
-                    name={quiz.name}
-                    theme={quiz.permission}
-                    onPressDelete={() =>{setIsVisibleDelete(true), setRoleIdDelete(quiz._id)}}
+                    key={quiz._id}
+                    title={"N° " + quiz._id}
+                    text={quiz.name}
+                    textBottom={quiz.permission}
+                    onPressDelete={() => {
+                      setIsVisibleDelete(true), setRoleIdDelete(quiz._id);
+                    }}
                     onPressUpdate={() => {
                       setIsVisibleUpdate(true);
                       setRoleIdToUpdate(quiz._id);
@@ -124,6 +150,7 @@ const Gestion_Role = ({ navigation }) => {
 
       <Modal animationType="slide" transparent={true} visible={isVisibleAdd}>
         <View style={{ backgroundColor: "white", flex: 1 }}>
+          <OwnTextInput label="Id" onChangeText={setRoleId} value={roleId} />
           <OwnTextInput
             label="Permission"
             onChangeText={setPermission}
@@ -152,7 +179,7 @@ const Gestion_Role = ({ navigation }) => {
       <Modal animationType="slide" transparent={true} visible={isVisibleUpdate}>
         <View style={{ backgroundColor: "white", flex: 1 }}>
           <OwnTextInput
-            label="Theme"
+            label="Permission"
             onChangeText={setRoleThemeToUpdate}
             value={roleThemeToUpdate}
           />
@@ -165,14 +192,12 @@ const Gestion_Role = ({ navigation }) => {
             <Button
               variant="outlined"
               title="exit"
-              style={styles.button}
               onPress={() => setIsVisibleUpdate(false)}
             />
 
             <Button
               variant="outlined"
               title="Valider"
-              style={styles.button}
               onPress={() => onPressUpdate()}
               disabled={!isValidUpdate()}
             />
@@ -202,5 +227,9 @@ const styles = StyleSheet.create({
     marginTop: 16,
     width: "30%",
   },
+  button: {
+    marginBottom: 16,
+    marginHorizontal: '30%',
+  }
 });
 export default Gestion_Role;

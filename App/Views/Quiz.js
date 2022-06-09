@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Modal,
+  StyleSheet,
 } from "react-native";
 import Question from "../Models/Question";
 import axios from "axios";
@@ -52,14 +53,10 @@ export default function Quiz({ navigation }) {
       <View>
         {/*Question counter*/}
         <View
-          style={{
-            flexDirection: "row",
-            alignItems: "flex-end",
-          }}
+          style={styles.renderQuestion}
         >
           <Text
             style={{
-              color: "white",
               fontSize: 20,
               opacity: 0.6,
               marginTop: 12,
@@ -67,15 +64,16 @@ export default function Quiz({ navigation }) {
           >
             {CurrentQuestionIndex + 1}{" "}
           </Text>
-          <Text style={{ color: "white", fontSize: 18, opacity: 0.6 }}>
+          <Text style={{ fontSize: 18, opacity: 0.6 }}>
             / {allQuestions.length}
           </Text>
         </View>
 
         <Text
           style={{
-            color: "white",
+            color: "black",
             fontSize: 30,
+            marginHorizontal: 16,
           }}
         >
           {allQuestions[CurrentQuestionIndex]?.question}
@@ -86,7 +84,7 @@ export default function Quiz({ navigation }) {
 
   const renderOptions = () => {
     return (
-      <View>
+      <View style={styles.renderOptions}>
         {allQuestions[CurrentQuestionIndex].options.map((option) => (
           <TouchableOpacity
             onPress={() => validateAnswer(option)}
@@ -99,7 +97,7 @@ export default function Quiz({ navigation }) {
                   ? "green"
                   : option == CurrentOptionSelected
                   ? "red"
-                  : "blue",
+                  : "black",
               backgroundColor: "black",
               height: 60,
               borderRadius: 20,
@@ -256,11 +254,11 @@ export default function Quiz({ navigation }) {
         {quizzes && show
           ? quizzes.map((quiz) => {
               return (
-                <View>
+                <View style={styles.quiz}>
                   <DisplayQuizzes
                     key={quiz._id.toString()}
-                    name={quiz.name}
-                    theme={quiz.theme}
+                    text={quiz.name}
+                    title={quiz.theme}
                     onPressView={() => showQuiz(quiz._id)}
                   />
                 </View>
@@ -283,3 +281,20 @@ export default function Quiz({ navigation }) {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  quiz: {
+    marginTop: 16,
+  },
+  renderOptions: {
+    marginHorizontal: 16,
+  },
+  renderButton: {
+    marginHorizontal: 16,
+  },
+  renderQuestion: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    marginHorizontal: 16,
+  },
+});

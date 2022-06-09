@@ -96,8 +96,8 @@ const Gestion_Quiz = ({ navigation }) => {
                 <View>
                   <DisplayQuizzes
                     key={quiz._id.toString()}
-                    name={quiz.name}
-                    theme={quiz.theme}
+                    text={quiz.name}
+                    title={quiz.theme}
                     onPressView={() =>
                       navigation.navigate("Gestion_Question", quiz)
                     }
@@ -178,7 +178,6 @@ const Gestion_Quiz = ({ navigation }) => {
             <Button
               variant="outlined"
               title="exit"
-              style={styles.button}
               onPress={() => {
                 setIsVisibleUpdate(false);
                 setErrorMsg("");
@@ -188,7 +187,6 @@ const Gestion_Quiz = ({ navigation }) => {
             <Button
               variant="outlined"
               title="Valider"
-              style={styles.button}
               onPress={() => onPressUpdate()}
               disabled={!IsValidUpdate()}
             />
@@ -223,5 +221,9 @@ const styles = StyleSheet.create({
     color: "red",
     alignSelf: "center",
   },
+  button: {
+    marginBottom: 16,
+    marginHorizontal: '30%',
+  }
 });
 export default Gestion_Quiz;

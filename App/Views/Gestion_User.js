@@ -21,11 +21,12 @@ const Gestion_User = ({ navigation }) => {
   const [isVisibleDelete, setIsVisibleDelete] = useState(false);
   const [userIdDelete, setUserIdDelete] = useState(false);
 
-  const [usersIdToUpdate, setUsersIdToUpdate] = useState("");
+  const [usersIdToUpdate, setUsersIdToUpdate] = useState(false);
   const [userFirstNameToUpdate, setUserFirstNameToUpdate] = useState("");
   const [userLastNameToUpdate, setUserLastNameToUpdate] = useState("");
   const [userLoginToUpdate, setUserLoginToUpdate] = useState("");
   const [userPasswordToUpdate, setUserPasswordToUpdate] = useState("");
+  const [userRoleIdToUpdate, setUserRoleIdToUpdate] = useState("");
 
   const [isVisibleAdd, setIsVisibleAdd] = useState(false);
   const [isVisibleUpdate, setIsVisibleUpdate] = useState(false);
@@ -54,12 +55,11 @@ const Gestion_User = ({ navigation }) => {
     return (
       userFirstNameToUpdate &&
       userLastNameToUpdate &&
-      userLoginToUpdate &&
       userPasswordToUpdate.length > 7
     );
   };
 
-  const isSameLogin= () => {
+  const isSameLogin = () => {
     var verification = false;
     users.map((user) => {
       if (user._id == login) {
@@ -79,8 +79,24 @@ const Gestion_User = ({ navigation }) => {
     return verification;
   };
 
+  const IsSameRoleUpdate = () => {
+    var verification = false;
+    roles.map((role) => {
+      if (role._id == userRoleIdToUpdate) {
+        verification = true;
+      }
+    });
+    return verification;
+  };
   const isValidAdd = () => {
-    return firstName && lastName && login && password.length > 7 && IsSameRole() && !isSameLogin();
+    return (
+      firstName &&
+      lastName &&
+      login &&
+      password.length > 7 &&
+      IsSameRole() &&
+      !isSameLogin()
+    );
   };
 
   const onPressAdd = async () => {
@@ -88,6 +104,7 @@ const Gestion_User = ({ navigation }) => {
       const url = `${BASE_API}/users/create`;
       const passwordHash = stringMd5(password);
       const body = `lastName=${lastName}&firstName=${firstName}&password=${passwordHash}&_id=${login}&role_id=${roleId}`;
+      console.log(body);
       const response = await axios
         .post(url, body)
         .catch((error) => console.log(error));
@@ -111,10 +128,10 @@ const Gestion_User = ({ navigation }) => {
   };
 
   const onPressUpdate = async () => {
-    if (isValidUpdate()) {
+    if (isValidUpdate() && IsSameRoleUpdate()) {
       const url = `${BASE_API}/users/update/${usersIdToUpdate}`;
       const passwordHash = stringMd5(userPasswordToUpdate);
-      const body = `firstName=${userFirstNameToUpdate}&lastName=${userLastNameToUpdate}&login=${userLoginToUpdate}&password=${passwordHash}`;
+      const body = `firstName=${userFirstNameToUpdate}&lastName=${userLastNameToUpdate}&_id=${userLoginToUpdate}&password=${passwordHash}&role_id=${userRoleIdToUpdate}`;
       console.log(body);
       const response = await axios
         .patch(url, body)
@@ -137,8 +154,9 @@ const Gestion_User = ({ navigation }) => {
                 <View>
                   <DisplayQuizzes
                     key={quiz._id.toString()}
-                    name={quiz.firstName}
-                    theme={quiz.lastName}
+                    text={quiz.firstName}
+                    title={quiz.lastName}
+                    textBottom={quiz.role_id}
                     onPressDelete={() => {
                       setIsVisibleDelete(true);
                       setUserIdDelete(quiz._id);
@@ -148,6 +166,8 @@ const Gestion_User = ({ navigation }) => {
                       setUsersIdToUpdate(quiz._id);
                       setUserFirstNameToUpdate(quiz.firstName);
                       setUserLastNameToUpdate(quiz.lastName);
+                      setUserRoleIdToUpdate(quiz.role_id);
+                      setUserLoginToUpdate(quiz._id);
                     }}
                   />
                 </View>
@@ -230,20 +250,20 @@ const Gestion_User = ({ navigation }) => {
 
       <Modal animationType="slide" transparent={true} visible={isVisibleUpdate}>
         <View style={{ backgroundColor: "white", flex: 1 }}>
+        <OwnTextInput
+            label="Identifiant"
+            value={userLoginToUpdate}
+            disable={true}
+          />
           <OwnTextInput
-            label="Theme"
+            label="Nom"
             onChangeText={setUserLastNameToUpdate}
             value={userLastNameToUpdate}
           />
           <OwnTextInput
-            label="Name"
+            label="Prenom"
             onChangeText={setUserFirstNameToUpdate}
             value={userFirstNameToUpdate}
-          />
-          <OwnTextInput
-            label="Login"
-            onChangeText={setUserLoginToUpdate}
-            value={userLoginToUpdate}
           />
           <OwnTextInput
             label="Password"
@@ -251,18 +271,21 @@ const Gestion_User = ({ navigation }) => {
             isPassword={true}
             value={userPasswordToUpdate}
           />
+          <OwnTextInput
+            label="Role Id"
+            onChangeText={setUserRoleIdToUpdate}
+            value={userRoleIdToUpdate}
+          />
           <View style={styles.buttonContainer}>
             <Button
               variant="outlined"
               title="exit"
-              style={styles.button}
               onPress={() => setIsVisibleUpdate(false)}
             />
 
             <Button
               variant="outlined"
               title="Valider"
-              style={styles.button}
               onPress={() => {
                 onPressUpdate();
               }}
@@ -290,9 +313,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     marginBottom: 24,
   },
-  backButton: {
-    marginTop: 16,
-    width: "30%",
-  },
+  button: {
+    marginBottom: 16,
+    marginHorizontal: '30%',
+  }
 });
 export default Gestion_User;
