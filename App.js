@@ -68,7 +68,6 @@ export default function App() {
   }, [user]);
 
   const logOut = () => {
-    console.log('test');
     setUser({
       _id: "",
       login: "",
@@ -85,7 +84,6 @@ export default function App() {
     });
 
     setIsLog(false);
-
   };
 
   return (
@@ -121,6 +119,13 @@ export default function App() {
               name="Gestion des roles"
               component={Gestion_Role}
               initialParams={{ user: user, role: role }}
+              options={
+                !can(role.permission, "admin")
+                  ? {
+                      drawerItemStyle: { display: "none" },
+                    }
+                  : null
+              }
             />
             <Drawer.Screen
               name="Gestion_Question"
@@ -158,13 +163,17 @@ export default function App() {
           </Drawer.Navigator>
         </NavigationContainer>
       ) : (
-        <View>
+        <View style={styles.container}>
           <OwnTextInput label="Login" onChangeText={setLogin} />
-          <OwnTextInput label="Password" onChangeText={setPassword} isPassword={true}/>
+          <OwnTextInput
+            label="Password"
+            onChangeText={setPassword}
+            isPassword={true}
+          />
           <Button
             variant="outlined"
             title="Connection"
-            style={styles.button}
+            style={styles.buttonContainer}
             onPress={() => {
               auth();
             }}
@@ -177,9 +186,10 @@ export default function App() {
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginHorizontal: 24,
-    marginBottom: 24,
+    marginTop: 16,
+    marginHorizontal: "20%",
+  },
+  container: {
+    marginTop: "30%",
   },
 });
