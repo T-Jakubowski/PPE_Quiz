@@ -24,7 +24,8 @@ export default function Quiz({ navigation }) {
 
   useEffect(() => {
     getQuizzes();
-  }, []);
+  }, [navigation]);
+
 
   const [show, setShow] = useState(true);
   const [allQuestions, setAllQuestions] = useState([{question: '', options: ['']}]);

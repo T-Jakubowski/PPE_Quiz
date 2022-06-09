@@ -192,12 +192,14 @@ const Gestion_Role = () => {
             <Button
               variant="outlined"
               title="exit"
+              style={styles.button}
               onPress={() => setIsVisibleUpdate(false)}
             />
 
             <Button
               variant="outlined"
               title="Valider"
+              style={styles.button}
               onPress={() => onPressUpdate()}
               disabled={!isValidUpdate()}
             />
@@ -227,9 +229,5 @@ const styles = StyleSheet.create({
     marginTop: 16,
     width: "30%",
   },
-  button: {
-    marginBottom: 16,
-    marginHorizontal: '30%',
-  }
 });
 export default Gestion_Role;

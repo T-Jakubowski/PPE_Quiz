@@ -156,7 +156,7 @@ const Gestion_User = ({ navigation }) => {
                     key={quiz._id.toString()}
                     text={quiz.firstName}
                     title={quiz.lastName}
-                    textBottom={quiz.role_id}
+                    textBottom={quiz.role}
                     onPressDelete={() => {
                       setIsVisibleDelete(true);
                       setUserIdDelete(quiz._id);
@@ -280,12 +280,14 @@ const Gestion_User = ({ navigation }) => {
             <Button
               variant="outlined"
               title="exit"
+              style={styles.button}
               onPress={() => setIsVisibleUpdate(false)}
             />
 
             <Button
               variant="outlined"
               title="Valider"
+              style={styles.button}
               onPress={() => {
                 onPressUpdate();
               }}
@@ -313,9 +315,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     marginBottom: 24,
   },
-  button: {
-    marginBottom: 16,
-    marginHorizontal: '30%',
-  }
+  backButton: {
+    marginTop: 16,
+    width: "30%",
+  },
 });
 export default Gestion_User;

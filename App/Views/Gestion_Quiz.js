@@ -223,7 +223,6 @@ const styles = StyleSheet.create({
   },
   button: {
     marginBottom: 16,
-    marginHorizontal: '30%',
   }
 });
 export default Gestion_Quiz;
