@@ -18,7 +18,7 @@ const Gestion_Role = () => {
 
   const [roleIdToUpdate, setRoleIdToUpdate] = useState("");
   const [roleNameToUpdate, setRoleNameToUpdate] = useState("");
-  const [roleThemeToUpdate, setRoleThemeToUpdate] = useState("");
+  const [rolePermissionToUpdate, setRolePermissionToUpdate] = useState("");
 
   const [isVisibleAdd, setIsVisibleAdd] = useState(false);
   const [isVisibleUpdate, setIsVisibleUpdate] = useState(false);
@@ -41,8 +41,8 @@ const Gestion_Role = () => {
     const permissionRegex = /[0-1]{8}/;
     return (
       roleNameToUpdate &&
-      permissionRegex.test(roleThemeToUpdate) &&
-      roleThemeToUpdate.length == 8
+      permissionRegex.test(rolePermissionToUpdate) &&
+      rolePermissionToUpdate.length == 8
     );
   };
 
@@ -93,7 +93,7 @@ const Gestion_Role = () => {
   const onPressUpdate = async () => {
     const url = `${BASE_API}/roles/update/${roleIdToUpdate}`;
     console.log(url);
-    const body = `name=${roleNameToUpdate}&permission=${roleThemeToUpdate}`;
+    const body = `name=${roleNameToUpdate}&permission=${rolePermissionToUpdate}`;
     const response = await axios
       .patch(url, body)
       .catch((error) => console.log(error));
@@ -120,7 +120,7 @@ const Gestion_Role = () => {
                       setIsVisibleUpdate(true);
                       setRoleIdToUpdate(quiz._id);
                       setRoleNameToUpdate(quiz.name);
-                      setRoleThemeToUpdate(quiz.permission);
+                      setRolePermissionToUpdate(quiz.permission);
                     }}
                   />
                 </View>
@@ -180,8 +180,8 @@ const Gestion_Role = () => {
         <View style={{ backgroundColor: "white", flex: 1 }}>
           <OwnTextInput
             label="Permission"
-            onChangeText={setRoleThemeToUpdate}
-            value={roleThemeToUpdate}
+            onChangeText={setRolePermissionToUpdate}
+            value={rolePermissionToUpdate}
           />
           <OwnTextInput
             label="Name"

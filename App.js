@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 import { Button } from "@react-native-material/core";
 import OwnTextInput from "./App/components/TextInput";
 import axios from "axios";
@@ -34,6 +35,7 @@ export default function App() {
     name: "",
     permission: "",
   });
+
   const [password, setPassword] = useState("");
   const [isLog, setIsLog] = useState(false);
 
@@ -149,7 +151,7 @@ export default function App() {
             />
             <Drawer.Screen
               name="Déconnexion"
-              component={Gestion_User}
+              component={App}
               initialParams={{ user: user, role: role }}
               options={
                 !can(role.permission, "user")
@@ -174,9 +176,7 @@ export default function App() {
             variant="outlined"
             title="Connection"
             style={styles.buttonContainer}
-            onPress={() => {
-              auth();
-            }}
+            onPress={auth}
           />
         </View>
       )}

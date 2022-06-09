@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
-  Button,
+  ScrollView,
   TouchableOpacity,
   SafeAreaView,
   Modal,
   StyleSheet,
 } from "react-native";
-import Question from "../Models/Question";
 import axios from "axios";
 import { BASE_API } from "@env";
 import DisplayQuizzes from "../components/DisplayQuizzes";
@@ -24,8 +23,12 @@ export default function Quiz({ navigation }) {
 
   useEffect(() => {
     getQuizzes();
-  }, [navigation]);
+  }, []);
 
+  const timeout = setTimeout(() => getQuizzes(), 1000);
+  useEffect(() => {
+  timeout;
+  }, [timeout]);
 
   const [show, setShow] = useState(true);
   const [allQuestions, setAllQuestions] = useState([{question: '', options: ['']}]);
@@ -85,7 +88,7 @@ export default function Quiz({ navigation }) {
 
   const renderOptions = () => {
     return (
-      <View style={styles.renderOptions}>
+      <ScrollView style={styles.renderOptions}>
         {allQuestions[CurrentQuestionIndex].options.map((option) => (
           <TouchableOpacity
             onPress={() => validateAnswer(option)}
@@ -140,7 +143,7 @@ export default function Quiz({ navigation }) {
             ) : null}
           </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
     );
   };
 
